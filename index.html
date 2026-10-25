@@ -12,13 +12,14 @@
       --card: rgba(255, 255, 255, 0.96);
       --text: #172033;
       --muted: #6b7280;
-      --primary: #2563eb;
+      --primary: #6366f1;
       --primary-dark: #1d4ed8;
       --border: #e5e7eb;
       --success: #15803d;
       --success-bg: #ecfdf3;
       --danger: #dc2626;
       --danger-bg: #fef2f2;
+      --secondary: #fef08a;
       --shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
@@ -453,25 +454,25 @@
     </header>
     <dialog class="account-dialog" id="authDialog" aria-labelledby="authTitle">
       <section class="card">
-        <h2 class="section-title" id="authTitle">Tài khoản và đồng bộ</h2>
+        <h2 class="section-title" id="authTitle">Đăng nhập vào AutoGrade</h2>
         <p class="section-subtitle">Đăng nhập để lưu lịch sử và cấu hình đề riêng trên tài khoản, dùng được trên thiết bị khác.</p>
         <form class="account-form" id="authForm">
           <label>Email<input id="authEmail" type="email" autocomplete="email" required></label>
           <label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required></label>
           <div class="row">
-            <button class="btn primary" id="signInBtn" type="submit">Đăng nhập</button>
-            <button class="btn secondary" id="signUpBtn" type="button"style="background:#7c3aed; border-color:#7c3aed; color:#fff;">Tạo tài khoản</button>
+            <button class="btn primary" id="signInBtn" type="submit"style="background:#6366F1; border-color:#6366F1; color:#fff;">Đăng nhập</button>
+            <button class="btn secondary" id="signUpBtn" type="button"style="background:#A855F7; border-color:#A855F7; color:#fff;">Tạo tài khoản</button>
           </div>
         </form>
-        <button class="btn secondary" id="googleSignInBtn" type="button"style="background:#16a34a; border-color:#16a34a; color:#fff;">Tiếp tục với Google</button>
+        <button class="btn secondary" id="googleSignInBtn" type="button"style="background:#2DD4BF; border-color:#2DD4BF; color:#fff;">Tiếp tục với Google</button>
         <p class="cloud-status" id="authStatus" role="status"></p>
-        <div class="settings-actions"><button class="btn secondary" id="authCloseBtn" type="button">Đóng</button></div>
+        <div class="settings-actions"><button class="btn secondary" id="authCloseBtn" type="button"style="background:#B91C1C; border-color:#B91C1C; color:#fff;">Đóng</button></div>
       </section>
     </dialog>
     <dialog class="settings-dialog" id="examSettingsDialog" aria-labelledby="settingsTitle">
       <section class="card settings-card">
         <h2 class="section-title" id="settingsTitle">Cấu hình đề thi</h2>
-        <p class="section-subtitle">Thiết lập số câu, thang điểm, mã đề và đáp án. Chỉ các câu trong phạm vi cấu hình mới được chấm.</p>
+        <p class="section-subtitle">Thiết lập số câu, thang điểm, mã đề và đáp án. Chỉ các câu trong phạm vi đã thiết lập cấu hình mới được chấm.</p>
         <div class="result-grid">
           <label>Số câu (1–60)<input id="questionCount" type="number" min="1" max="60" value="60"></label>
           <label>Điểm tối đa<input id="maxScore" type="number" min="0.01" step="any" value="10"></label>
@@ -479,7 +480,7 @@
         </div>
         <div id="answerKeys"></div>
         <div id="importPanel" class="import-panel hidden">
-          <h3>Nhập nhiều mã đề từ tệp</h3>
+          <h3>Nhập nhiều mã đề từ tệp có sẵn</h3>
           <p class="section-subtitle">Dùng khi cấu hình từ 3 mã đề trở lên.</p>
           <div class="template-links"><a href="answer_key_import_template.xlsx" download>Tải mẫu Excel (.xlsx)</a><a href="answer_key_import_template.docx" download>Tải mẫu Word (.docx)</a></div>
           <label>Chọn tệp đáp án<input id="importFile" type="file" accept=".xlsx,.docx"></label>
@@ -503,7 +504,7 @@
       <div class="row">
         <button class="btn primary" id="cameraBtn" type="button">📷 Camera · tự quét</button>
         <button class="btn secondary" id="chooseBtn" type="button">🖼 Photo</button>
-        <button class="btn secondary" id="clearBtn" type="button">↻ Reset</button>
+        <button class="btn secondary" id="clearBtn" type="button"style="background:#F87171; border-color:#F87171; color:#fff;">↻ Reset</button>
       </div>
 
       <input id="cameraInput" class="hidden" type="file" accept="image/*" capture="environment">
@@ -588,7 +589,7 @@
           <p class="section-subtitle" id="historySubtitle" style="margin-bottom:0">Đăng nhập để đồng bộ lịch sử giữa các thiết bị.</p>
         </div>
         <div class="row">
-          <button class="btn secondary" id="exportHistoryBtn" type="button">⬇ Xuất kết quả Excel (.xlsx)</button>
+          <button class="btn secondary" id="exportHistoryBtn" type="button"style="background:#10B981; border-color:#10B981; color:#fff;">⬇ Xuất kết quả Excel (.xlsx)</button>
           <button class="btn danger" id="clearHistoryBtn" type="button">🗑 Xóa lịch sử chấm điểm</button>
         </div>
       </div>
