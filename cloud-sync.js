@@ -197,10 +197,13 @@
   window.OmrCloud = {
     isConfigured, getSession: () => getClient().auth.getSession(),
     onAuthStateChange: callback => getClient().auth.onAuthStateChange(callback),
-    signUp: (email, password) => getClient().auth.signUp({ email, password }),
-    signIn: (email, password) => getClient().auth.signInWithPassword({ email, password }),
-    signInWithGoogle: () => getClient().auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } }),
-    signOut: () => getClient().auth.signOut(),
+    signUp: (email, password, options = {}) => getClient().auth.signUp({ email: String(email).trim().toLowerCase(), password, options: options.redirectTo ? { emailRedirectTo: options.redirectTo } : undefined }),
+    signIn: (email, password) => getClient().auth.signInWithPassword({ email: String(email).trim().toLowerCase(), password }),
+    resendConfirmation: (email, redirectTo) => getClient().auth.resend({ type: 'signup', email: String(email).trim().toLowerCase(), options: redirectTo ? { emailRedirectTo: redirectTo } : undefined }),
+    requestPasswordReset: (email, redirectTo) => getClient().auth.resetPasswordForEmail(String(email).trim().toLowerCase(), redirectTo ? { redirectTo } : undefined),
+    updatePassword: password => getClient().auth.updateUser({ password }),
+    signInWithGoogle: redirectTo => getClient().auth.signInWithOAuth({ provider: 'google', options: { ...(redirectTo ? { redirectTo } : {}), queryParams: { prompt: 'select_account' } } }),
+    signOut: () => getClient().auth.signOut({ scope: 'local' }),
     saveRecord, retryPending, listRecords, listAllRecords, signedImageUrl, loadConfig, saveConfig, clearHistory
   };
 })();
