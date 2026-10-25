@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <title>AutoGrade · Multiple-choice test</title>
+
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: rgba(255, 255, 255, 0.96);
+      --text: #172033;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --border: #e5e7eb;
+      --success: #15803d;
+      --success-bg: #ecfdf3;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.12), transparent 30%),
+        radial-gradient(circle at 100% 10%, rgba(14, 165, 233, 0.10), transparent 28%),
+        var(--bg);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .app {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    .hero {
+      color: #fff;
+      background: linear-gradient(135deg, #2563eb, #1e40af);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: 0 18px 45px rgba(37, 99, 235, 0.22);
+      margin-bottom: 16px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .hero h1 {
+      margin: 0 0 7px;
+      font-size: clamp(24px, 5vw, 34px);
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 14px;
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 14px 0;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .section-title {
+      margin: 0 0 4px;
+      font-size: 18px;
+    }
+
+    .section-subtitle {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 13px 17px;
+      font-size: 15px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.20);
+    }
+
+    .btn.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn.secondary {
+      color: #1f2937;
+      background: #eef2f7;
+    }
+
+    .btn.danger {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #status {
+      margin-top: 14px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .image-card {
+      text-align: center;
+    }
+
+    .image-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-height: 75vh;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #f8fafc;
+    }
+
+    #debugCanvas {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: min(75vh, 900px);
+      object-fit: contain;
+      margin: 0 auto;
+    }
+.result-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #f8fafc;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      margin-bottom: 5px;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 24px;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #eef0f4;
+    }
+
+    .info-row .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .info-row .value {
+      text-align: right;
+      font-size: 13px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    #check.ok {
+      color: var(--success);
+      background: var(--success-bg);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    #check.bad {
+      color: var(--danger);
+      background: var(--danger-bg);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .score-note {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .answers {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #111827;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    .history-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .history-count {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px;
+      background: #f8fafc;
+      color: #4b5563;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th:nth-child(3),
+    th:nth-child(4),
+    th:nth-child(5),
+    td:nth-child(3),
+    td:nth-child(4),
+    td:nth-child(5) {
+      text-align: center;
+    }
+
+    .empty-history {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+    }
+
+    .legend {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 12px 10px 32px;
+      }
+
+      .hero,
+      .card {
+        border-radius: 18px;
+      }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .result-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .info-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .info-row .value {
+        text-align: left;
+      }
+
+      .history-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .result-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .btn {
+        flex: 1 1 auto;
+      }
+    }
+    .version-code-wrap { margin:12px 0; max-width:260px; }
+    .version-code-wrap input { width:100%; margin-top:5px; padding:9px 10px; border:1px solid var(--border); border-radius:10px; }
+    .import-panel { margin-top:18px; padding:16px; border:1px solid var(--border); border-radius:14px; background:#f8fafc; }
+    .import-panel h3 { margin:0 0 6px; font-size:16px; }
+    .template-links { display:flex; gap:12px; flex-wrap:wrap; margin:10px 0; }
+    .import-preview { max-width:100%; overflow:auto; margin-top:12px; border:1px solid var(--border); border-radius:10px; background:#fff; }
+    .import-preview-table { width:max-content; min-width:100%; border-collapse:collapse; font-size:12px; }
+    .import-preview-table th,.import-preview-table td { min-width:58px; padding:5px; border:1px solid var(--border); text-align:center; }
+    .import-preview-table th:first-child,.import-preview-table td:first-child { min-width:100px; position:sticky; left:0; background:#f8fafc; }
+    .import-preview-table select,.import-preview-table input { min-width:48px; padding:5px; border:1px solid var(--border); border-radius:6px; }
+    #importStatus { min-height:1.4em; margin:10px 0; color:var(--danger); font-size:13px; }
+    .camera-dialog { width:min(1280px,calc(100vw - 16px)); max-width:none; height:calc(100dvh - 16px); max-height:calc(100dvh - 16px); padding:0; border:0; border-radius:18px; background:var(--card); }
+    .camera-dialog::backdrop { background:rgba(15,23,42,.72); }
+    .camera-card { display:flex; flex-direction:column; gap:8px; width:100%; height:100%; min-height:0; margin:0; overflow:auto; }
+    .camera-preview-wrap { display:flex; flex:1 1 auto; align-items:center; justify-content:center; min-width:0; min-height:220px; max-width:100%; max-height:none; margin:0 auto; overflow:hidden; background:#111827; border-radius:14px; }
+    #cameraVideo { display:block; width:100%; height:100%; max-width:100%; max-height:100%; object-fit:contain; }
+    #cameraState { padding:12px; margin:12px 0; border-radius:12px; background:#f1f5f9; color:#475569; font-size:14px; }
+    #cameraState.camera-ready { background:#ecfdf3; color:#166534; outline:2px solid #22c55e; }
+    #cameraStatus { margin:0 0 12px; color:var(--muted); font-size:13px; }
+    @media(max-width:620px){.camera-card{padding:12px;gap:6px}.camera-dialog{width:calc(100vw - 10px);height:calc(100dvh - 10px);max-height:calc(100dvh - 10px)}.camera-preview-wrap{min-height:180px}}
+    .settings-dialog { width: min(920px, calc(100vw - 24px)); max-width: none; max-height: 92vh; padding: 0; border: 0; border-radius: 20px; background: transparent; overflow: visible; }
+    .settings-dialog::backdrop { background: rgba(15, 23, 42, .60); backdrop-filter: blur(3px); }
+    .settings-card { max-height: 92vh; overflow: auto; margin: 0; }
+    .settings-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+    .settings-message { min-height:1.4em; color:var(--danger); margin:12px 0 0; }
+    .account-box { display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+    .account-label { max-width:280px; overflow-wrap:anywhere; text-align:right; font-size:12px; color:rgba(255,255,255,.88); }
+    .account-dialog,.detail-dialog { width:min(960px,calc(100vw - 24px)); max-width:none; max-height:92vh; padding:0; border:0; border-radius:20px; background:var(--card); }
+    .account-dialog { width:min(520px,calc(100vw - 24px)); }
+    .account-dialog::backdrop,.detail-dialog::backdrop { background:rgba(15,23,42,.65); backdrop-filter:blur(3px); }
+    .account-form { display:grid; gap:12px; }
+    .account-form input { width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:10px; }
+    .cloud-status { min-height:1.5em; margin:8px 0; color:var(--muted); font-size:13px; }
+    .cloud-status.error { color:var(--danger); }
+    .history-row { cursor:pointer; }
+    .history-row:hover,.history-row:focus { background:#eff6ff; outline:2px solid #93c5fd; outline-offset:-2px; }
+    .history-pagination { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:12px; }
+    .detail-card { max-height:92vh; overflow:auto; }
+    .detail-image-wrap { display:flex; justify-content:center; align-items:center; max-height:65vh; min-height:160px; overflow:hidden; border-radius:14px; background:#f8fafc; }
+    #historyDetailImage { display:block; max-width:100%; max-height:65vh; object-fit:contain; }
+    .detail-image-placeholder { color:var(--muted); padding:28px; }
+    @media(max-width:620px){.account-box{align-items:flex-start}.account-label{text-align:left}.history-pagination{flex-wrap:wrap}.detail-dialog{width:calc(100vw - 14px)}}
+    .key-grid { grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; }
+    .key-grid label { font-size:12px; }
+    .key-grid select { width:100%; min-width:0; }
+    @media(max-width:620px){.settings-dialog{width:calc(100vw - 16px)}.key-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.settings-actions button{flex:1}}
+  </style>
+
+  <!-- OpenCV.js is loaded once by app.js through the shared initialization promise. -->
+</head>
+
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Chấm trắc nghiệm trực tuyến</h1>
+          <p>Chụp hoặc tải ảnh phiếu trả lời để tự động nhận diện và kiểm tra.</p>
+        </div>
+        <div class="account-box">
+          <span class="account-label" id="accountLabel">Chưa đăng nhập · dữ liệu chỉ lưu trên thiết bị</span>
+          <div class="row">
+            <button class="btn secondary" id="authOpenBtn" type="button">Đăng nhập / Đăng ký</button>
+            <button class="btn secondary hidden" id="signOutBtn" type="button">Đăng xuất</button>
+            <button class="btn secondary" id="settingsOpenBtn" type="button">⚙ Cấu hình đề</button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <dialog class="account-dialog" id="authDialog" aria-labelledby="authTitle">
+      <section class="card">
+        <h2 class="section-title" id="authTitle">Tài khoản và đồng bộ</h2>
+        <p class="section-subtitle">Đăng nhập để lưu lịch sử và cấu hình đề riêng trên tài khoản, dùng được trên thiết bị khác.</p>
+        <form class="account-form" id="authForm">
+          <label>Email<input id="authEmail" type="email" autocomplete="email" required></label>
+          <label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required></label>
+          <div class="row">
+            <button class="btn primary" id="signInBtn" type="submit">Đăng nhập</button>
+            <button class="btn secondary" id="signUpBtn" type="button">Tạo tài khoản</button>
+          </div>
+        </form>
+        <button class="btn secondary" id="googleSignInBtn" type="button">Tiếp tục với Google</button>
+        <p class="cloud-status" id="authStatus" role="status"></p>
+        <div class="settings-actions"><button class="btn secondary" id="authCloseBtn" type="button">Đóng</button></div>
+      </section>
+    </dialog>
+    <dialog class="settings-dialog" id="examSettingsDialog" aria-labelledby="settingsTitle">
+      <section class="card settings-card">
+        <h2 class="section-title" id="settingsTitle">Cấu hình đề thi</h2>
+        <p class="section-subtitle">Thiết lập số câu, thang điểm, mã đề và đáp án. Chỉ các câu trong phạm vi cấu hình mới được chấm.</p>
+        <div class="result-grid">
+          <label>Số câu (1–60)<input id="questionCount" type="number" min="1" max="60" value="60"></label>
+          <label>Điểm tối đa<input id="maxScore" type="number" min="0.01" step="any" value="10"></label>
+          <label>Số mã đề<input id="versionCount" type="number" min="1" max="99" value="1"></label>
+        </div>
+        <div id="answerKeys"></div>
+        <div id="importPanel" class="import-panel hidden">
+          <h3>Nhập nhiều mã đề từ tệp</h3>
+          <p class="section-subtitle">Dùng khi cấu hình từ 3 mã đề trở lên.</p>
+          <div class="template-links"><a href="answer_key_import_template.xlsx" download>Tải mẫu Excel (.xlsx)</a><a href="answer_key_import_template.docx" download>Tải mẫu Word (.docx)</a></div>
+          <label>Chọn tệp đáp án<input id="importFile" type="file" accept=".xlsx,.docx"></label>
+          <p id="importStatus" role="status"></p>
+          <div id="importPreview" class="import-preview hidden"></div>
+          <button class="btn primary hidden" id="importApplyBtn" type="button">Xác nhận thay mã đề và đáp án</button>
+        </div>
+        <p class="section-subtitle">Nhập đáp án A/B/C/D cho câu cần chấm. Mã đề trên phiếu gồm hai chữ số (01–99).</p>
+        <p class="settings-message" id="settingsStatus" role="alert"></p>
+        <div class="settings-actions">
+          <button class="btn secondary" id="settingsCloseBtn" type="button">Đóng</button>
+          <button class="btn primary" id="settingsSaveBtn" type="button">Lưu cấu hình</button>
+          <button class="btn danger" id="resetExamConfigBtn" type="button">Đặt lại mã đề và đáp án</button>
+        </div>
+      </section>
+    </dialog>
+    <section class="card">
+      <h2 class="section-title">Bắt đầu chấm bài</h2>
+      <p class="section-subtitle">Chọn ảnh từ thư viện hoặc dùng camera của thiết bị.</p>
+
+      <div class="row">
+        <button class="btn primary" id="cameraBtn" type="button">📷 Camera · tự quét</button>
+        <button class="btn secondary" id="chooseBtn" type="button">🖼 Photo</button>
+        <button class="btn secondary" id="clearBtn" type="button">↻ Reset</button>
+      </div>
+
+      <input id="cameraInput" class="hidden" type="file" accept="image/*" capture="environment">
+      <input id="fileInput" class="hidden" type="file" accept="image/*">
+
+      <div id="status">Đang tải OpenCV.js…</div>
+      <button id="opencvRetryBtn" class="btn secondary hidden" type="button">Thử tải lại OpenCV.js</button>
+      <canvas id="cameraScanCanvas" hidden></canvas>
+      <canvas id="cameraCaptureCanvas" hidden></canvas>
+      <dialog class="camera-dialog" id="cameraDialog" aria-labelledby="cameraTitle">
+        <section class="card camera-card">
+          <h2 class="section-title" id="cameraTitle">Quét phiếu bằng camera</h2>
+          <p class="section-subtitle">Đưa trọn phiếu vào khung. Hệ thống sẽ tự chấm khi thấy đủ bốn marker góc ổn định.</p>
+          <div class="camera-preview-wrap" id="cameraPreview"><video id="cameraVideo" autoplay muted playsinline></video></div>
+          <div id="cameraState" aria-live="polite">Đang chờ camera…</div>
+          <p id="cameraStatus" role="status"></p>
+          <div class="row">
+            <button class="btn secondary" id="cameraFallbackBtn" type="button">Chụp ảnh thủ công</button>
+            <button class="btn primary hidden" id="cameraNextBtn" type="button">Quét phiếu tiếp</button>
+            <button class="btn secondary" id="cameraCloseBtn" type="button">Đóng camera</button>
+          </div>
+        </section>
+      </dialog>
+    </section>
+
+<section class="card image-card hidden" id="gradedImageCard">
+      <h2 class="section-title">Ảnh đã chấm</h2>
+      <p class="section-subtitle">Kết quả nhận diện được đánh dấu trực tiếp trên ảnh.</p>
+      <div class="image-wrap">
+        <canvas id="debugCanvas"></canvas>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Kết quả chấm</h2>
+      <p class="section-subtitle">Thông tin được cập nhật sau khi xử lý ảnh.</p>
+
+      <div class="result-grid">
+        <div class="metric">
+          <span>Mã sinh viên</span>
+          <b id="sid">—</b>
+        </div>
+        <div class="metric">
+          <span>Mã đề</span>
+          <b id="exam">—</b>
+        </div>
+        <div class="metric">
+          <span>Số câu đúng</span>
+          <b id="correct">—</b>
+        </div>
+        <div class="metric">
+          <span>Điểm</span>
+          <b id="score">—</b>
+        </div>
+      </div>
+
+      <div class="info-list">
+        <div class="info-row">
+          <span class="label">Trạng thái</span>
+          <span class="value" id="check">—</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Câu cần kiểm tra</span>
+          <span class="value" id="checkQuestions">Không có</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Câu sai</span>
+          <span class="value" id="wrong">—</span>
+        </div>
+
+      </div>
+
+      <p class="score-note">* Bài có ít nhất một câu bỏ trống hoặc tô từ 2 đáp án trở lên và cần kiểm tra lại.</p>
+
+      <div class="answers" id="answers">Chưa có kết quả.</div>
+    </section>
+
+    <section class="card" id="historyCard">
+      <div class="history-head">
+        <div>
+          <h2 class="section-title">Lịch sử bài đã chấm</h2>
+          <p class="section-subtitle" id="historySubtitle" style="margin-bottom:0">Đăng nhập để đồng bộ lịch sử giữa các thiết bị.</p>
+        </div>
+        <div class="row">
+          <button class="btn secondary" id="exportHistoryBtn" type="button">⬇ Xuất kết quả Excel (.xlsx)</button>
+          <button class="btn danger" id="clearHistoryBtn" type="button">🗑 Xóa lịch sử chấm điểm</button>
+        </div>
+      </div>
+
+      <p class="history-count" id="historyCount">Chưa có bài nào.</p>
+      <p class="cloud-status" id="historySyncStatus" role="status"></p>
+      <button class="btn secondary hidden" id="historyRetryBtn" type="button">Thử đồng bộ lại</button>
+
+      <div class="table-wrap">
+        <table id="historyTable">
+          <thead>
+            <tr>
+              <th>Mã sinh viên</th>
+              <th>Mã đề</th>
+              <th>Đúng</th>
+              <th>Điểm tổng</th>
+              <th>Trạng thái</th>
+              <th>Câu cần kiểm tra</th>
+              <th>Câu sai</th>
+              <th>Thời gian</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <p class="legend">Dấu * ở cột Điểm tổng nghĩa là bài đó cần kiểm tra lại các câu được liệt kê ở kết quả chấm.</p>
+      <div class="history-pagination">
+        <button class="btn secondary" id="historyPrevBtn" type="button">← Trước</button>
+        <span id="historyPageLabel" class="history-count">—</span>
+        <button class="btn secondary" id="historyNextBtn" type="button">Tiếp →</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="detail-dialog" id="historyDetailDialog" aria-labelledby="historyDetailTitle">
+    <section class="card detail-card">
+      <h2 class="section-title" id="historyDetailTitle">Chi tiết bài đã chấm</h2>
+      <p class="section-subtitle" id="historyDetailTime"></p>
+      <div class="detail-image-wrap" id="historyDetailImageWrap"><span class="detail-image-placeholder">Đang tải ảnh…</span></div>
+      <div class="result-grid">
+        <div class="metric"><span>Mã sinh viên</span><b id="detailSid">—</b></div>
+        <div class="metric"><span>Mã đề</span><b id="detailExam">—</b></div>
+        <div class="metric"><span>Số câu đúng</span><b id="detailCorrect">—</b></div>
+        <div class="metric"><span>Điểm</span><b id="detailScore">—</b></div>
+      </div>
+      <div class="info-list">
+        <div class="info-row"><span class="label">Trạng thái</span><span class="value" id="detailStatus">—</span></div>
+        <div class="info-row"><span class="label">Câu cần kiểm tra</span><span class="value" id="detailChecks">Không có</span></div>
+        <div class="info-row"><span class="label">Câu sai</span><span class="value" id="detailWrong">—</span></div>
+        <div class="info-row"><span class="label">Chi tiết kiểm tra</span><span class="value" id="detailReview">Không có</span></div>
+      </div>
+      <div class="answers" id="detailAnswers">Chưa có dữ liệu đáp án.</div>
+      <div class="settings-actions"><button class="btn secondary" id="historyDetailCloseBtn" type="button">Đóng, quay lại lịch sử</button></div>
+    </section>
+  </dialog>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("exportHistoryBtn")?.addEventListener("click", exportHistoryExcel);
+      document.getElementById("clearHistoryBtn")?.addEventListener("click", clearHistory);
+      renderHistory();
+    });
+  </script>
+
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.13.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="backend-config.js?v=1"></script>
+  <script src="cloud-sync.js?v=2"></script>
+  <script src="app.js?v=23"></script>
+</body>
+</html>
+
