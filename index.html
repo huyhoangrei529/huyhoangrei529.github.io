@@ -12,7 +12,7 @@
       --card: rgba(255, 255, 255, 0.96);
       --text: #172033;
       --muted: #6b7280;
-      --primary: #6366f1;
+      --primary: #2563eb;
       --primary-dark: #1d4ed8;
       --border: #e5e7eb;
       --success: #15803d;
@@ -459,18 +459,34 @@
           <label>Email<input id="authEmail" type="email" autocomplete="email" required></label>
           <label>Mật khẩu<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required></label>
           <div class="row">
-            <button class="btn primary" id="signInBtn" type="submit"style="background:#6366F1; border-color:#6366F1; color:#fff;">Đăng nhập</button>
-            <button class="btn secondary" id="signUpBtn" type="button"style="background:#F0ABFC; border-color:#F0ABFC; color:#fff;">Tạo tài khoản</button>
+            <button class="btn primary" id="signInBtn" type="submit"style="background:#60A5FA; border-color:#60A5FA; color:#fff;">Đăng nhập</button>
+            <button class="btn secondary" id="signUpBtn" type="button"style="background:#A78BFA; border-color:#A78BFA; color:#fff;">Tạo tài khoản</button>
           </div>
         </form>
+        <div class="row">
+          <button class="btn secondary" id="authResetPasswordBtn" type="button"style="background:#9CA3AF; border-color:#9CA3AF; color:#fff;">Quên mật khẩu?</button>
+          <button class="btn secondary hidden" id="authResendConfirmBtn" type="button"style="background:#DDD6FE; border-color:#DDD6FE; color:#fff;">Gửi lại email xác nhận</button>
+        </div>
         <button class="btn secondary" id="googleSignInBtn" type="button"style="background:#86EFAC; border-color:#86EFAC; color:#fff;">Tiếp tục với Google</button>
         <p class="cloud-status" id="authStatus" role="status"></p>
         <div class="settings-actions"><button class="btn secondary" id="authCloseBtn" type="button"style="background:#B91C1C; border-color:#B91C1C; color:#fff;">Đóng</button></div>
       </section>
     </dialog>
+    <dialog class="account-dialog" id="passwordRecoveryDialog" aria-labelledby="passwordRecoveryTitle">
+      <section class="card">
+        <h2 class="section-title" id="passwordRecoveryTitle">Đặt mật khẩu mới</h2>
+        <p class="section-subtitle">Nhập mật khẩu mới cho tài khoản của bạn.</p>
+        <form class="account-form" id="passwordRecoveryForm">
+          <label>Mật khẩu mới<input id="recoveryNewPassword" type="password" autocomplete="new-password" minlength="6" required></label>
+          <label>Nhập lại mật khẩu<input id="recoveryConfirmPassword" type="password" autocomplete="new-password" minlength="6" required></label>
+          <p class="cloud-status" id="passwordRecoveryStatus" role="status"></p>
+          <div class="settings-actions"><button class="btn secondary" id="passwordRecoveryCloseBtn" type="button">Đóng</button><button class="btn primary" type="submit">Lưu mật khẩu mới</button></div>
+        </form>
+      </section>
+    </dialog>
     <dialog class="settings-dialog" id="examSettingsDialog" aria-labelledby="settingsTitle">
       <section class="card settings-card">
-        <h2 class="section-title" id="settingsTitle">Cấu hình đề thi</h2>
+        <h2 class="section-title" id="settingsTitle">Cài đặt cấu hình đề thi</h2>
         <p class="section-subtitle">Thiết lập số câu, thang điểm, mã đề và đáp án. Chỉ các câu trong phạm vi đã thiết lập cấu hình mới được chấm.</p>
         <div class="result-grid">
           <label>Số câu (1–60)<input id="questionCount" type="number" min="1" max="60" value="60"></label>
@@ -485,14 +501,14 @@
           <label>Chọn tệp đáp án<input id="importFile" type="file" accept=".xlsx,.docx"></label>
           <p id="importStatus" role="status"></p>
           <div id="importPreview" class="import-preview hidden"></div>
-          <button class="btn primary hidden" id="importApplyBtn" type="button">Xác nhận thay mã đề và đáp án</button>
+          <button class="btn primary hidden" id="importApplyBtn" type="button"style="background:#C084FC; border-color:#C084FC; color:#fff;">Xác nhận thay mã đề và đáp án</button>
         </div>
         <p class="section-subtitle">Nhập đáp án A/B/C/D cho câu cần chấm. Mã đề trên phiếu gồm hai chữ số (01–99).</p>
         <p class="settings-message" id="settingsStatus" role="alert"></p>
         <div class="settings-actions">
-          <button class="btn secondary" id="settingsCloseBtn" type="button">Đóng</button>
-          <button class="btn primary" id="settingsSaveBtn" type="button">Lưu cấu hình</button>
-          <button class="btn danger" id="resetExamConfigBtn" type="button">Đặt lại mã đề và đáp án</button>
+          <button class="btn secondary" id="settingsCloseBtn" type="button"style="background:#BDBDBD; border-color:#BDBDBD; color:#fff;">Đóng</button>
+          <button class="btn primary" id="settingsSaveBtn" type="button"style="background:#22D3EE; border-color:#22D3EE; color:#fff;">Lưu cấu hình</button>
+          <button class="btn danger" id="resetExamConfigBtn" type="button"style="background:#F87171; border-color:#F87171; color:#fff;">Đặt lại mã đề và đáp án</button>
         </div>
       </section>
     </dialog>
@@ -501,7 +517,7 @@
       <p class="section-subtitle">Chọn ảnh từ thư viện hoặc dùng camera của thiết bị.</p>
 
       <div class="row">
-        <button class="btn primary" id="cameraBtn" type="button">📷 Camera · tự quét</button>
+        <button class="btn primary" id="cameraBtn" type="button">📸 Camera · tự quét</button>
         <button class="btn secondary" id="chooseBtn" type="button"style="background:#FCD34D; border-color:#FCD34D; color:#fff;">📤 Photo</button>
         <button class="btn secondary" id="clearBtn" type="button"style="background:#F87171; border-color:#F87171; color:#fff;">🔄 Reset</button>
       </div>
@@ -521,9 +537,9 @@
           <div id="cameraState" aria-live="polite">Đang chờ camera…</div>
           <p id="cameraStatus" role="status"></p>
           <div class="row">
-            <button class="btn secondary" id="cameraFallbackBtn" type="button">Chụp ảnh thủ công</button>
-            <button class="btn primary hidden" id="cameraNextBtn" type="button">Quét phiếu tiếp</button>
-            <button class="btn secondary" id="cameraCloseBtn" type="button">Đóng camera</button>
+            <button class="btn secondary" id="cameraFallbackBtn" type="button">🔘Chụp ảnh thủ công</button>
+            <button class="btn primary hidden" id="cameraNextBtn" type="button">▶️Quét phiếu tiếp</button>
+            <button class="btn secondary" id="cameraCloseBtn" type="button">⏹️Đóng camera</button>
           </div>
         </section>
       </dialog>
@@ -588,14 +604,14 @@
           <p class="section-subtitle" id="historySubtitle" style="margin-bottom:0">Đăng nhập để đồng bộ lịch sử giữa các thiết bị.</p>
         </div>
         <div class="row">
-          <button class="btn secondary" id="exportHistoryBtn" type="button"style="background:#10B981; border-color:#10B981; color:#fff;">📥 Xuất kết quả Excel (.xlsx)</button>
-          <button class="btn danger" id="clearHistoryBtn" type="button">🗑️ Xóa lịch sử chấm điểm</button>
+          <button class="btn secondary" id="exportHistoryBtn" type="button"style="background:#10B981; border-color:#10B981; color:#fff;">📥 Xuất file kết quả Excel (.xlsx)</button>
+          <button class="btn danger" id="clearHistoryBtn" type="button"style="background:#F87171; border-color:#F87171; color:#fff;">🗑️ Xóa lịch sử chấm điểm</button>
         </div>
       </div>
 
       <p class="history-count" id="historyCount">Chưa có bài nào.</p>
       <p class="cloud-status" id="historySyncStatus" role="status"></p>
-      <button class="btn secondary hidden" id="historyRetryBtn" type="button">Thử đồng bộ lại</button>
+      <button class="btn secondary hidden" id="historyRetryBtn" type="button">♻️ Thử đồng bộ lại</button>
 
       <div class="table-wrap">
         <table id="historyTable">
